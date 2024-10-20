@@ -1,0 +1,17 @@
+users:
+  - comment: Test user00
+    name: user00
+    uid: 10000
+    gid: 10000
+    public_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEBhfOaweJlFFiqIhyAjr1lzEA3noMhJnUWIbbuCULYr testusers@virtorfeo_hpc_cluster
+    groups: wheel
+    state: present
+
+  - comment: Test user01
+    name: user01
+    uid: 20000
+    gid: 20000
+    public_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEBhfOaweJlFFiqIhyAjr1lzEA3noMhJnUWIbbuCULYr testusers@virtorfeo_hpc_cluster
+    groups: wheel
+    state: absent
+

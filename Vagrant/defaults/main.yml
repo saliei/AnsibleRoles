@@ -1,0 +1,118 @@
+---
+k3s_nodes:
+  nodes:
+    - hostname: "kube01"
+      ip: "192.168.132.10"
+  box: 
+    name: "fedora/38-cloud-base"
+    version: "38.20230413.1"
+  ssh:
+    insert_key: false
+    # custom key can be added here, note that later on ansible should
+    # also has access to the machines via one of these keys
+    custom_key: "~/.ssh/id_ed25519.pub"
+    private_keys: ["~/.ssh/id_ed25519", "~/.vagrant.d/insecure_private_key"]
+  libvirt: 
+    uri: "qemu:///system"
+    driver: "kvm"
+    # this is the network we have defined 
+    # with libvirt which must be active
+    private_network_name: "HPC-devel"
+  network:
+    name: "private_network"
+    netmask: "255.255.255.0"
+    forward_mode: "nat"
+  resources:
+    memory: "2048"
+    vcpu: "1"
+  provision:
+    shell:
+      path: "../../scripts/0_bash_common_provisioning.sh"
+    ansible:
+      path: "../../playbooks/adhoc/common_provisioning.yml"
+
+login_nodes:
+  nodes:
+    - hostname: "login01"
+      ip: "192.168.132.50"
+  box: 
+    name: "fedora/38-cloud-base"
+    version: "38.20230413.1"
+  ssh:
+    insert_key: false
+    custom_key: "~/.ssh/id_ed25519.pub"
+    private_keys: ["~/.ssh/id_ed25519", "~/.vagrant.d/insecure_private_key"]
+  libvirt: 
+    uri: "qemu:///system"
+    driver: "kvm"
+    private_network_name: "HPC-devel"
+  network:
+    name: "private_network"
+    netmask: "255.255.255.0"
+    forward_mode: "nat"
+  resources:
+    memory: "2048"
+    vcpu: "1"
+  provision:
+    shell:
+      path: "../../scripts/0_bash_common_provisioning.sh"
+    ansible:
+      path: "../../playbooks/adhoc/common_provisioning.yml"
+
+compute_nodes:
+  nodes:
+    - hostname: "node01"
+      ip: "192.168.132.51"
+    - hostname: "node02"
+      ip: "192.168.132.52"
+  box: 
+    name: "fedora/38-cloud-base"
+    version: "38.20230413.1"
+  ssh:
+    insert_key: false
+    custom_key: "~/.ssh/id_ed25519.pub"
+    private_keys: ["~/.ssh/id_ed25519", "~/.vagrant.d/insecure_private_key"]
+  libvirt: 
+    uri: "qemu:///system"
+    driver: "kvm"
+    private_network_name: "HPC-devel"
+  network:
+    name: "private_network"
+    netmask: "255.255.255.0"
+    forward_mode: "nat"
+  resources:
+    memory: "2048"
+    vcpu: "1"
+  provision:
+    shell:
+      path: "../../scripts/0_bash_common_provisioning.sh"
+    ansible:
+      path: "../../playbooks/adhoc/common_provisioning.yml"
+
+backup_nodes:
+  nodes:
+    - hostname: "borg01"
+      ip: "192.168.132.30"
+  box: 
+    name: "fedora/38-cloud-base"
+    version: "38.20230413.1"
+  ssh:
+    insert_key: false
+    custom_key: "~/.ssh/id_ed25519.pub"
+    private_keys: ["~/.ssh/id_ed25519", "~/.vagrant.d/insecure_private_key"]
+  libvirt: 
+    uri: "qemu:///system"
+    driver: "kvm"
+    private_network_name: "HPC-devel"
+  network:
+    name: "private_network"
+    netmask: "255.255.255.0"
+    forward_mode: "nat"
+  resources:
+    memory: "2048"
+    vcpu: "1"
+  provision:
+    shell:
+      path: "../../scripts/0_bash_common_provisioning.sh"
+    ansible:
+      path: "../../playbooks/adhoc/common_provisioning.yml"

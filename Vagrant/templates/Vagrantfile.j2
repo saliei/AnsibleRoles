@@ -1,0 +1,41 @@
+# encoding: utf-8
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require "yaml"
+
+vars_filepath = File.join(File.dirname(__FILE__), '../vars.yml')
+global_vars = YAML.load_file("#{vars_filepath}")
+vars = global_vars["login_nodes"]
+
+Vagrant.configure("2") do |config|
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.box         = vars["box"]["name"]
+  config.vm.box_version = vars["box"]["version"]
+
+  config.ssh.insert_key = vars["ssh"]["insert_key"]
+  config.ssh.private_key_path = vars["ssh"]["private_keys"]
+
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.memory = vars["resources"]["memory"]
+    libvirt.cpus   = vars["resources"]["vcpu"]
+    libvirt.driver = vars["libvirt"]["driver"]
+    libvirt.uri    = vars["libvirt"]["uri"]
+  end
+
+  vars["nodes"].each do |domain|
+    config.vm.define domain["hostname"] do |node|
+      node.vm.hostname = domain["hostname"]
+      node.vm.network vars["network"]["name"],
+        libvirt__network_name: vars["libvirt"]["private_network_name"],
+        netmask: vars["network"]["netmask"],
+        forward_mode: vars["network"]["forward_mode"]
+
+      node.vm.provision "file", source: vars["ssh"]["custom_key"], destination: "/home/vagrant/.ssh/authorized_keys"
+      node.vm.provision "shell", inline: "cp /home/vagrant/.ssh/authorized_keys /root/.ssh/authorized_keys"
+      node.vm.provision "ansible", playbook: vars["provision"]["ansible"]["path"]
+      node.vm.provision "shell", path: vars["provision"]["shell"]["path"], args: domain["ip"]
+    end
+  end
+
+end

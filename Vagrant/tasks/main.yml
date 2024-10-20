@@ -1,0 +1,41 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: True
+
+  tasks:
+  - name: Provision K3s nodes
+    ansible.builtin.command: vagrant up
+    environment:
+      VAGRANT_CWD: "{{ playbook_dir }}/../vagrantfiles/k3s_nodes"
+    run_once: true
+    register: output
+  - debug:
+      msg: "{{ output.stdout }}"
+
+  - name: Provision login nodes
+    ansible.builtin.command: vagrant up
+    environment:
+      VAGRANT_CWD: "{{ playbook_dir }}/../vagrantfiles/login_nodes"
+    run_once: true
+    register: output
+  - debug:
+      msg: "{{ output.stdout }}"
+
+  - name: Provision compute nodes
+    ansible.builtin.command: vagrant up
+    environment:
+      VAGRANT_CWD: "{{ playbook_dir }}/../vagrantfiles/compute_nodes"
+    run_once: true
+    register: output
+  - debug:
+      msg: "{{ output.stdout }}"
+
+  - name: Provision backup nodes
+    ansible.builtin.command: vagrant up
+    environment:
+      VAGRANT_CWD: "{{ playbook_dir }}/../vagrantfiles/backup_nodes"
+    run_once: true
+    register: output
+  - debug:
+      msg: "{{ output.stdout }}"
